@@ -1,15 +1,12 @@
 import { createConfig, http } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
+import { injected, walletConnect } from 'wagmi/connectors';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 
-export const config = createConfig({
-  chains: [sepolia],  // ← CHỈ Sepolia testnet
-  connectors: [
-    injected(),  // MetaMask auto-detect
-  ],
-  transports: {
-    [sepolia.id]: http(),  // ← CHỈ Sepolia RPC
-  },
+export const config = getDefaultConfig({
+  appName: 'Moca Gating System',
+  projectId: 'YOUR_PROJECT_ID', // Get from https://cloud.walletconnect.com
+  chains: [sepolia],
   ssr: true,
 });
 

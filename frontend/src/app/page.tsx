@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Header from '@/components/Header'
 import GatingOptions from '@/components/GatingOptions'
 import InviteCodeForm from '@/components/InviteCodeForm'
 import NFTVerification from '@/components/NFTVerification'
@@ -53,41 +54,44 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl">
-        {step === 'select' && (
-          <GatingOptions
-            onSelectNFT={handleSelectNFT}
-            onSelectInvite={handleSelectInvite}
-          />
-        )}
+    <div className="min-h-screen bg-slate-900">
+      <Header />
+      <main className="flex items-center justify-center p-4 pt-8">
+        <div className="w-full max-w-6xl">
+          {step === 'select' && (
+            <GatingOptions
+              onSelectNFT={handleSelectNFT}
+              onSelectInvite={handleSelectInvite}
+            />
+          )}
 
-        {step === 'verify-code' && (
-          <InviteCodeForm
-            onVerified={handleCodeVerified}
-            onBack={handleBackToSelect}
-          />
-        )}
+          {step === 'verify-code' && (
+            <InviteCodeForm
+              onVerified={handleCodeVerified}
+              onBack={handleBackToSelect}
+            />
+          )}
 
-        {step === 'verify-nft' && (
-          <NFTVerification
-            onVerified={handleNFTVerified}
-            onBack={handleBackToSelect}
-          />
-        )}
+          {step === 'verify-nft' && (
+            <NFTVerification
+              onVerified={handleNFTVerified}
+              onBack={handleBackToSelect}
+            />
+          )}
 
-        {step === 'register' && (
-          <EmailForm
-            wallet={wallet}
-            inviteCode={inviteCode}
-            registrationType={registrationType}
-            onSuccess={handleRegistrationSuccess}
-            onBack={handleBackToVerify}
-          />
-        )}
+          {step === 'register' && (
+            <EmailForm
+              wallet={wallet}
+              inviteCode={inviteCode}
+              registrationType={registrationType}
+              onSuccess={handleRegistrationSuccess}
+              onBack={handleBackToVerify}
+            />
+          )}
 
-        {step === 'success' && <SuccessScreen />}
-      </div>
-    </main>
+          {step === 'success' && <SuccessScreen />}
+        </div>
+      </main>
+    </div>
   )
 }
