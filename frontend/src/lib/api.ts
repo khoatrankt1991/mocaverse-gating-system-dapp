@@ -3,7 +3,7 @@ import type { ApiResponse, InviteCodeResponse, NFTEligibilityResponse, Registrat
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'
 
 export async function verifyInviteCode(code: string): Promise<InviteCodeResponse> {
-  const response = await fetch(`${API_URL}/api/verifyCode?code=${encodeURIComponent(code)}`)
+  const response = await fetch(`${API_URL}/api/verify-code?code=${encodeURIComponent(code)}`)
   
   if (!response.ok) {
     const error = await response.json()
