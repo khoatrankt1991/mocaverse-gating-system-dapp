@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import GatingOptions from '../components/GatingOptions'
 import InviteCodeForm from '../components/InviteCodeForm'
 import NFTVerification from '../components/NFTVerification'
@@ -61,11 +62,12 @@ export default function Home() {
   // Show VIP dashboard if user is connected and is VIP
   if (isConnected && isVip) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen bg-slate-900 flex flex-col">
         <Header />
-        <main className="flex items-center justify-center p-4 pt-8">
+        <main className="flex-1 flex items-center justify-center p-4 pt-8">
           <VIPDashboard />
         </main>
+        <Footer />
       </div>
     )
   }
@@ -73,9 +75,9 @@ export default function Home() {
   // Show loading while checking VIP status
   if (isConnected && isVIPLoading) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen bg-slate-900 flex flex-col">
         <Header />
-        <main className="flex items-center justify-center p-4 pt-8">
+        <main className="flex-1 flex items-center justify-center p-4 pt-8">
           <div className="w-full max-w-md mx-auto">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-4"></div>
@@ -83,14 +85,15 @@ export default function Home() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 flex flex-col">
       <Header />
-      <main className="flex items-center justify-center p-4 pt-8">
+      <main className="flex-1 flex items-center justify-center p-4 pt-8">
         <div className="w-full max-w-6xl">
           {step === 'select' && (
             <GatingOptions
@@ -126,6 +129,7 @@ export default function Home() {
           {step === 'success' && <SuccessScreen />}
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
