@@ -39,6 +39,10 @@ app.get('/api-docs', (c) => {
     },
     servers: [
       {
+        url: 'https://moca-gating-system.kai-tran9xx.workers.dev',
+        description: 'Production server'
+      },
+      {
         url: 'http://localhost:8787',
         description: 'Development server'
       }
