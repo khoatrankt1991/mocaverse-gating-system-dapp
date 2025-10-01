@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 import type { Env } from '../types';
 
-// MockMocaNFT ABI (only the functions we need)
-const NFT_ABI = [
+// MocaStaking ABI (only the functions we need)
+const STAKING_ABI = [
   'function hasEligibleNFT(address user) view returns (bool)',
-  'function isStakedLongEnough(uint256 tokenId) view returns (bool)',
-  'function ownerOf(uint256 tokenId) view returns (address)'
+  'function getUserStakes(address user) view returns (tuple(uint256 tokenId, uint256 stakedAt, bool claimed)[])',
+  'function isStakedLongEnough(address user, uint256 index) view returns (bool)'
 ];
 
 /**
@@ -21,8 +21,8 @@ export async function checkNFTEligibility(
     
     // Create contract instance
     const contract = new ethers.Contract(
-      env.NFT_CONTRACT_ADDRESS,
-      NFT_ABI,
+      env.STAKING_NFT_CONTRACT_ADDRESS,
+      STAKING_ABI,
       provider
     );
     

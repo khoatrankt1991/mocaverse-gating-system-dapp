@@ -26,7 +26,7 @@ app.post('/', async (c) => {
       }, 400);
     }
     
-    const { email, walletAddress, inviteCode, signature, registrationType } = validation.data;
+    const { email, wallet, inviteCode, signature, registrationType } = validation.data;
     
     // Check rate limit
     const rateLimit = await checkRateLimit(email, c.env);
@@ -46,7 +46,7 @@ app.post('/', async (c) => {
     }
     
     // Check if wallet already used (for NFT registration)
-    if (walletAddress && await isWalletUsed(walletAddress, c.env)) {
+    if (wallet && await isWalletUsed(wallet, c.env)) {
       return c.json({ 
         error: 'Wallet already registered', 
         message: 'This wallet has already been used' 
@@ -57,27 +57,16 @@ app.post('/', async (c) => {
     
     // Verify based on registration type
     if (registrationType === 'nft') {
-      // NFT verification flow
-      if (!walletAddress || !signature) {
+      // NFT verification flow - Backend must verify eligibility
+      if (!wallet) {
         return c.json({ 
           error: 'Missing required fields', 
-          message: 'Wallet address and signature are required for NFT registration' 
+          message: 'Wallet address is required for NFT registration' 
         }, 400);
       }
       
-      // Verify signature
-      const message = `I want to register for Moca VIP with email: ${email}`;
-      const isValidSignature = verifyWalletSignature(message, signature, walletAddress);
-      
-      if (!isValidSignature) {
-        return c.json({ 
-          error: 'Invalid signature', 
-          message: 'Wallet signature verification failed' 
-        }, 400);
-      }
-      
-      // Check NFT eligibility
-      const hasEligibleNFT = await checkNFTEligibilityWithCache(walletAddress, c.env);
+      // Check NFT eligibility on-chain
+      const hasEligibleNFT = await checkNFTEligibilityWithCache(wallet, c.env);
       
       if (!hasEligibleNFT) {
         return c.json({ 
@@ -110,7 +99,7 @@ app.post('/', async (c) => {
     // Create registration
     const registration = await createRegistration(
       email,
-      walletAddress || null,
+      wallet || null,
       inviteCodeId,
       registrationType,
       c.env

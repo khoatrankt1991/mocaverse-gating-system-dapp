@@ -3,7 +3,7 @@ export interface Env {
   DB: D1Database;
   KV: KVNamespace;
   SEPOLIA_RPC_URL: string;
-  NFT_CONTRACT_ADDRESS: string;
+  STAKING_NFT_CONTRACT_ADDRESS: string;
   ADMIN_API_KEY?: string;
 }
 
@@ -36,7 +36,7 @@ export interface VerifyCodeResponse {
 
 export interface ReserveRequest {
   email: string;
-  walletAddress?: string;
+  wallet?: string;
   inviteCode?: string;
   signature?: string;
   registrationType: 'nft' | 'invite';

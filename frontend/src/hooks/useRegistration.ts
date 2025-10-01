@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSignMessage } from 'wagmi'
+import { useSignMessage, useAccount } from 'wagmi'
 import { isEmailUsed, submitReservation } from '@/lib/api'
 import type { GatingMethod } from '@/types'
 
@@ -16,6 +16,7 @@ export function useRegistration() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const { signMessageAsync } = useSignMessage()
+  const { address } = useAccount()
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -48,7 +49,7 @@ export function useRegistration() {
 
       // Request signature for NFT path
       let signature = ''
-      if (data.wallet) {
+      if (data.registrationType === 'nft' && address) {
         try {
           const message = `Register VIP access for ${data.email}`
           signature = await signMessageAsync({ message })
@@ -61,7 +62,7 @@ export function useRegistration() {
       // Submit registration
       await submitReservation({
         email: data.email.toLowerCase(),
-        wallet: data.wallet,
+        wallet: address, // Use connected wallet address
         inviteCode: data.inviteCode,
         signature: signature || undefined,
         registrationType: data.registrationType,

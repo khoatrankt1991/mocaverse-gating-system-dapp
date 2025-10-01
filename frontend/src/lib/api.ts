@@ -25,14 +25,14 @@ export async function checkNFTEligibility(wallet: string): Promise<NFTEligibilit
 }
 
 export async function isEmailUsed(email: string): Promise<boolean> {
-  const response = await fetch(`${API_URL}/api/checkEmail?email=${encodeURIComponent(email)}`)
+  const response = await fetch(`${API_URL}/api/check-email?email=${encodeURIComponent(email)}`)
   
   if (!response.ok) {
     return true // If error, assume email is used to be safe
   }
   
   const data = await response.json()
-  return data.isUsed || false
+  return data.used || false
 }
 
 export async function submitReservation(data: RegistrationData): Promise<ApiResponse> {

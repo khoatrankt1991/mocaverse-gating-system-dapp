@@ -12,7 +12,7 @@ export const inviteCodeSchema = z.string().regex(/^MOCA-[A-Z2-9]{8}$/, 'Invalid 
 // Reserve request validation
 export const reserveRequestSchema = z.object({
   email: emailSchema,
-  walletAddress: addressSchema.optional(),
+  wallet: addressSchema.optional(),
   inviteCode: inviteCodeSchema.optional(),
   signature: z.string().optional(),
   registrationType: z.enum(['nft', 'invite'])

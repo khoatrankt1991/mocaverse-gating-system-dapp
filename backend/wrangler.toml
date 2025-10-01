@@ -19,7 +19,7 @@ preview_id = "placeholder" # Local dev will use in-memory KV
 # Environment variables (will be set via wrangler secret put)
 [vars]
 SEPOLIA_RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY"
-NFT_CONTRACT_ADDRESS = "0xAAF273a3C22A61e8104D4DFC83c16e1E4E273a10"
+STAKING_NFT_CONTRACT_ADDRESS = "0x88a1Dbe9568dDb8764EA10b279801E146Be6C531"
 
 # Development overrides
 [env.dev]
