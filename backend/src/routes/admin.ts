@@ -117,6 +117,71 @@ app.get('/invite-codes', async (c) => {
 });
 
 /**
+ * GET /api/admin/vip-list
+ * Get list of all VIP members (admin only)
+ */
+app.get('/vip-list', async (c) => {
+  try {
+    const query = c.req.query();
+    const limit = parseInt(query.limit) || 50;
+    const offset = parseInt(query.offset) || 0;
+    const type = query.type; // 'nft', 'invite', 'all'
+    
+    let whereClause = '';
+    if (type && type !== 'all') {
+      whereClause = `WHERE r.registration_type = '${type}'`;
+    }
+    
+    const vipMembers = await c.env.DB
+      .prepare(`
+        SELECT 
+          r.email,
+          r.wallet_address,
+          r.registration_type,
+          r.registered_at,
+          ic.code as invite_code
+        FROM registrations r
+        LEFT JOIN invite_codes ic ON r.invite_code_id = ic.id
+        ${whereClause}
+        ORDER BY r.registered_at DESC
+        LIMIT ? OFFSET ?
+      `)
+      .bind(limit, offset)
+      .all<{
+        email: string;
+        wallet_address: string;
+        registration_type: string;
+        registered_at: number;
+        invite_code: string | null;
+      }>();
+    
+    const totalCount = await c.env.DB
+      .prepare(`SELECT COUNT(*) as count FROM registrations r ${whereClause}`)
+      .first<{ count: number }>();
+    
+    return c.json({
+      success: true,
+      data: vipMembers.results.map(member => ({
+        email: member.email,
+        wallet: member.wallet_address,
+        type: member.registration_type,
+        registeredAt: new Date(member.registered_at * 1000).toISOString(),
+        inviteCode: member.invite_code
+      })),
+      pagination: {
+        total: totalCount?.count || 0,
+        limit,
+        offset,
+        hasMore: (offset + limit) < (totalCount?.count || 0)
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching VIP list:', error);
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+});
+
+/**
  * GET /api/admin/stats
  * Get system statistics (admin only)
  */

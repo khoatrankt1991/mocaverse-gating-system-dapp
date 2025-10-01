@@ -9,6 +9,7 @@ import checkEmailRoute from './routes/checkEmail';
 import checkWalletRoute from './routes/checkWallet';
 import reserveRoute from './routes/reserve';
 import adminRoute from './routes/admin';
+import vipStatusRoute from './routes/vipStatus';
 
 // Create main Hono app
 const app = new Hono<{ Bindings: Env }>();
@@ -182,6 +183,51 @@ app.get('/api-docs', (c) => {
           }
         }
       },
+      '/api/vip-status': {
+        get: {
+          summary: 'Check VIP status by wallet address',
+          parameters: [
+            {
+              name: 'wallet',
+              in: 'query',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Wallet address to check VIP status'
+            }
+          ],
+          responses: {
+            '200': {
+              description: 'VIP status check result',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      isVip: { type: 'boolean' },
+                      message: { type: 'string' },
+                      registration: {
+                        type: 'object',
+                        properties: {
+                          email: { type: 'string' },
+                          type: { 
+                            type: 'string',
+                            enum: ['nft', 'invite']
+                          },
+                          registeredAt: { type: 'string' },
+                          inviteCode: { type: 'string', nullable: true }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            '400': {
+              description: 'Bad request - Wallet address required'
+            }
+          }
+        }
+      },
       '/api/admin/generate-code': {
         post: {
           summary: 'Generate new invite code (Admin only)',
@@ -305,6 +351,79 @@ app.get('/api-docs', (c) => {
           }
         }
       },
+      '/api/admin/vip-list': {
+        get: {
+          summary: 'Get list of VIP members (Admin only)',
+          security: [{ apiKey: [] }],
+          parameters: [
+            {
+              name: 'limit',
+              in: 'query',
+              schema: { type: 'number', minimum: 1, maximum: 100, default: 50 },
+              description: 'Number of members to return'
+            },
+            {
+              name: 'offset',
+              in: 'query',
+              schema: { type: 'number', minimum: 0, default: 0 },
+              description: 'Number of members to skip'
+            },
+            {
+              name: 'type',
+              in: 'query',
+              schema: { 
+                type: 'string',
+                enum: ['nft', 'invite', 'all'],
+                default: 'all'
+              },
+              description: 'Filter by registration type'
+            }
+          ],
+          responses: {
+            '200': {
+              description: 'List of VIP members',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      data: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            email: { type: 'string' },
+                            wallet: { type: 'string' },
+                            type: { 
+                              type: 'string',
+                              enum: ['nft', 'invite']
+                            },
+                            registeredAt: { type: 'string' },
+                            inviteCode: { type: 'string', nullable: true }
+                          }
+                        }
+                      },
+                      pagination: {
+                        type: 'object',
+                        properties: {
+                          total: { type: 'number' },
+                          limit: { type: 'number' },
+                          offset: { type: 'number' },
+                          hasMore: { type: 'boolean' }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            '401': {
+              description: 'Unauthorized - Invalid API key'
+            }
+          }
+        }
+      },
       '/api/admin/stats': {
         get: {
           summary: 'Get system statistics (Admin only)',
@@ -359,7 +478,9 @@ app.get('/', (c) => {
       checkEmail: '/api/check-email',
       checkWallet: '/api/check-wallet',
       reserve: '/api/reserve',
-      admin: '/api/admin'
+      admin: '/api/admin',
+      vipStatus: '/api/vip-status',
+      adminVipList: '/api/admin/vip-list'
     }
   });
 });
@@ -370,6 +491,7 @@ app.route('/api/check-email', checkEmailRoute);
 app.route('/api/check-wallet', checkWalletRoute);
 app.route('/api/reserve', reserveRoute);
 app.route('/api/admin', adminRoute);
+app.route('/api/vip-status', vipStatusRoute);
 
 // 404 handler
 app.notFound((c) => {
