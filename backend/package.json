@@ -1,0 +1,33 @@
+{
+  "name": "moca-gating-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Moca VIP Gating System using Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create moca-invite-system-db",
+    "db:migrate:local": "wrangler d1 migrations apply moca-invite-system-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply moca-invite-system-db --remote",
+    "db:list": "wrangler d1 list",
+    "type-check": "tsc --noEmit",
+    "test:integration": "tsx scripts/test-all.ts",
+    "db:clean": "rm -rf .wrangler/state && npm run db:migrate:local"
+  },
+  "keywords": ["cloudflare", "workers", "hono", "d1", "api"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.0.0",
+    "ethers": "^6.10.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "@types/node": "^20.11.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.4"
+  }
+}
+
