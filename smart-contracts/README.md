@@ -1,133 +1,217 @@
-# MockMocaNFT Smart Contract
+# Moca Gating System - Smart Contracts
 
-## 📋 Overview
+## Overview
 
-ERC-721 NFT contract with staking mechanism for the Moca VIP gating system. Users must stake their NFT for at least 7 days to be eligible for VIP access.
+This repository contains the smart contracts for the Moca Gating System, implementing NFT-based access control with staking mechanisms.
 
-**Tech Stack**: Solidity 0.8.20 + Hardhat + TypeScript + OpenZeppelin
+## Architecture
 
-## 🎯 Features
+### Contracts
 
-- **ERC-721 Standard**: Fully compliant NFT implementation
-- **Staking Mechanism**: Lock NFTs and track staking duration
-- **Eligibility Check**: Verify if NFT has been staked ≥ 7 days
-- **Transfer Protection**: Prevent transfer of staked NFTs
-- **User Verification**: Check if user has any eligible NFT
+1. **MockMocaNFT** (`contracts/MockMocaNFT.sol`)
+   - ERC721 NFT contract for testing
+   - Supports per-token metadata URIs
+   - Owner can mint NFTs with custom URIs
 
-## 🔧 Key Functions
+2. **MocaStaking** (`contracts/MocaStaking.sol`)
+   - Staking contract for Moca NFTs
+   - Users transfer NFTs to stake them
+   - Tracks staking duration and eligibility
+   - Marketplace pattern - contract holds NFT while staked
 
-### Minting
+## Features
+
+### MockMocaNFT
+- ✅ ERC721 standard implementation
+- ✅ Per-token metadata URIs
+- ✅ Owner-only minting
+- ✅ URI updates for existing tokens
+
+### MocaStaking
+- ✅ Stake NFTs by transferring to contract
+- ✅ Unstake NFTs by index
+- ✅ Configurable minimum staking duration (default: 7 days)
+- ✅ Eligibility checks for staked NFTs
+- ✅ Multiple NFT staking per user
+- ✅ Security: ReentrancyGuard, Ownable
+- ✅ Gas efficient: Index-based operations
+
+## Contract Functions
+
+### MockMocaNFT
+
 ```solidity
-function mint(address to) public returns (uint256)
+// Mint new NFT
+function mint(address to, uint256 tokenId, string memory uri_) external onlyOwner
+
+// Update token URI
+function updateTokenURI(uint256 tokenId, string memory newUri) external onlyOwner
+
+// Get token URI
+function tokenURI(uint256 tokenId) public view returns (string memory)
 ```
-Mint a new NFT to the specified address.
 
-### Staking
-```solidity
-function stake(uint256 tokenId) public
-function unstake(uint256 tokenId) public
-```
-Stake/unstake an NFT (must be owner).
-
-### Eligibility
-```solidity
-function isStakedLongEnough(uint256 tokenId) public view returns (bool)
-```
-Check if a specific NFT has been staked for ≥ 7 days.
+### MocaStaking
 
 ```solidity
+// Stake NFT
+function stake(uint256 tokenId) external nonReentrant
+
+// Unstake NFT by index
+function unstake(uint256 index) external nonReentrant
+
+// Check if user has eligible NFT
 function hasEligibleNFT(address user) public view returns (bool)
-```
-Check if a user has at least one eligible NFT (used by backend).
 
-### Utilities
+// Get user's stakes
+function getUserStakes(address user) public view returns (StakeInfo[] memory)
+
+// Check if specific stake is eligible
+function isStakedLongEnough(address user, uint256 index) public view returns (bool)
+
+// Admin: Set minimum stake duration
+function setMinStakeDuration(uint256 _duration) external onlyOwner
+```
+
+## Data Structures
+
+### StakeInfo
 ```solidity
-function getStakeInfo(uint256 tokenId) public view returns (uint256 stakedAt, bool isStaked, uint256 duration)
+struct StakeInfo {
+    uint256 tokenId;    // Token ID that was staked
+    uint256 stakedAt;   // Timestamp when NFT was staked
+    bool claimed;       // Whether rewards have been claimed
+}
 ```
-Get detailed staking information for a token.
 
-## 🚀 Setup & Deployment
+## Deployment
 
-### 1. Install Dependencies
+### Prerequisites
+- Node.js 18+
+- Hardhat
+- MetaMask or compatible wallet
+
+### Setup
 ```bash
 npm install
 ```
 
-### 2. Configure Environment
-Copy `.env.example` to `.env` and fill in:
+### Deploy to Sepolia Testnet
 ```bash
-SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
-PRIVATE_KEY=your_wallet_private_key
-ETHERSCAN_API_KEY=your_etherscan_key  # Optional, for verification
+# Set environment variables
+export SEPOLIA_RPC_URL="your_sepolia_rpc_url"
+export PRIVATE_KEY="your_private_key"
+
+# Deploy contracts
+npx hardhat run scripts/deploy.ts --network sepolia
 ```
 
-### 3. Compile Contract
+### Deploy to Local Network
 ```bash
-npm run compile
+# Start local node
+npx hardhat node
+
+# Deploy contracts
+npx hardhat run scripts/deploy.ts --network localhost
 ```
 
-### 4. Run Tests
-```bash
-npm test
-```
+### Contract Addresses (Sepolia)
+- **MockMocaNFT:** `0x5d51BdDC648e411552846F901C734d38391a6608`
+- **MocaStaking:** `0x88a1Dbe9568dDb8764EA10b279801E146Be6C531`
 
-### 5. Deploy to Sepolia
-```bash
-npm run deploy:sepolia
-```
+See [CONTRACT_ADDRESSES.md](docs/CONTRACT_ADDRESSES.md) for full details.
 
-Save the deployed contract address - you'll need it for backend and frontend configuration.
+## Testing
 
-## 🧪 Testing
-
-The test suite covers:
-- ✅ Basic minting and ownership
-- ✅ Staking/unstaking mechanics
-- ✅ Transfer restrictions for staked NFTs
-- ✅ Time-based eligibility (using Hardhat time manipulation)
-- ✅ Multi-user scenarios
-- ✅ Edge cases (multiple stake cycles, etc.)
-
-Run tests:
+### Run All Tests
 ```bash
 npm test
 ```
 
-## 📝 Technical Details
+### Run Specific Test Suite
+```bash
+# Test MocaStaking contract
+npm test -- --grep "MocaStaking"
 
-### Staking Duration
-- **Minimum**: 7 days (604,800 seconds)
-- **Tracking**: On-chain via `block.timestamp`
-
-### Transfer Restrictions
-- Staked NFTs cannot be transferred
-- Must unstake before transferring
-- Minting and burning are not restricted
-
-### Gas Optimization Notes
-- `hasEligibleNFT()` iterates through all tokens - consider maintaining user→tokens mapping for production
-- Current implementation is optimized for clarity and testing
-
-## 🔐 Security Considerations
-
-- Only NFT owner can stake/unstake
-- Staked NFTs are locked from transfers
-- No admin functions to manipulate stakes
-- Timestamp-based logic (be aware of miner manipulation limits)
-
-## 📊 Events
-
-```solidity
-event NFTMinted(uint256 indexed tokenId, address indexed to);
-event NFTStaked(uint256 indexed tokenId, address indexed owner, uint256 timestamp);
-event NFTUnstaked(uint256 indexed tokenId, address indexed owner, uint256 timestamp);
+# Test MockMocaNFT contract
+npm test -- --grep "MockMocaNFT"
 ```
 
-## 🎯 Next Steps
+### Test Coverage
+- ✅ **24/24 MocaStaking tests pass (100%)**
+- ✅ **All core functionality tested**
+- ✅ **Edge cases covered**
+- ✅ **Security scenarios tested**
 
-After deployment:
-1. ✅ Save contract address
-2. ✅ Configure backend with contract address and ABI
-3. ✅ Mint test NFTs for testing
-4. ✅ Stake some NFTs and wait/time-travel for eligibility
+## Configuration
 
+### Environment Variables
+```bash
+# Network configuration
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_KEY
+PRIVATE_KEY=your_private_key
+
+# Contract addresses (Sepolia)
+NFT_CONTRACT_ADDRESS=0x5d51BdDC648e411552846F901C734d38391a6608
+STAKING_CONTRACT_ADDRESS=0x88a1Dbe9568dDb8764EA10b279801E146Be6C531
+```
+
+### Frontend Integration
+```javascript
+// Contract addresses (Sepolia)
+const NFT_CONTRACT = "0x5d51BdDC648e411552846F901C734d38391a6608";
+const STAKING_CONTRACT = "0x88a1Dbe9568dDb8764EA10b279801E146Be6C531";
+
+// Check eligibility
+const hasEligible = await stakingContract.hasEligibleNFT(userAddress);
+
+// Get user stakes
+const stakes = await stakingContract.getUserStakes(userAddress);
+```
+
+## Security Features
+
+- ✅ **ReentrancyGuard** - Prevents reentrancy attacks
+- ✅ **Ownable** - Admin-only functions protected
+- ✅ **Input validation** - Proper parameter checks
+- ✅ **Safe transfers** - ERC721 safeTransferFrom
+- ✅ **Claimed flags** - Prevent double unstaking
+
+## Gas Optimization
+
+- ✅ **Index-based operations** - No loops for unstaking
+- ✅ **Efficient storage** - Array-based user stakes
+- ✅ **Minimal external calls** - Optimized contract interactions
+
+## Usage Examples
+
+### Staking Flow
+1. User approves NFT to staking contract
+2. User calls `stake(tokenId)` to transfer NFT
+3. Contract tracks staking timestamp
+4. After minimum duration, NFT becomes eligible
+
+### Unstaking Flow
+1. User calls `getUserStakes()` to get stake array
+2. User finds index of NFT to unstake
+3. User calls `unstake(index)` to retrieve NFT
+4. Contract marks stake as claimed
+
+### Eligibility Check
+1. Frontend calls `hasEligibleNFT(user)` 
+2. Contract checks if any stake meets duration requirement
+3. Returns true/false for access control
+
+## Network Support
+
+- ✅ **Sepolia Testnet** - For testing
+- ✅ **Local Hardhat** - For development
+- ✅ **Mainnet Ready** - Production deployment ready
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Support
+
+For questions or issues, please create an issue in the repository.

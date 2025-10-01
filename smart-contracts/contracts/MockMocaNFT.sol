@@ -6,121 +6,78 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title MockMocaNFT
- * @dev ERC-721 NFT contract with staking mechanism for VIP gating system
+ * @dev Standard ERC-721 NFT contract with per-token metadata URIs
  * 
  * Features:
- * - Mint NFTs to users
- * - Stake NFTs (locks them, tracks timestamp)
- * - Check if NFT has been staked for >= 7 days
- * - Check if a user has any eligible NFT
+ * - Mint NFTs with custom metadata URI
+ * - Standard ERC721 transfer functionality
+ * - Owner can update token URIs
  */
 contract MockMocaNFT is ERC721, Ownable {
     
-    // Struct to store staking information
-    struct StakeInfo {
-        uint256 stakedAt;  // Timestamp when NFT was staked
-        bool isStaked;     // Whether NFT is currently staked
-    }
-    
-    // Mapping from tokenId to stake info
-    mapping(uint256 => StakeInfo) public stakes;
+    // Mapping from tokenId to token URI
+    mapping(uint256 => string) private _tokenURIs;
     
     // Counter for token IDs
     uint256 private _nextTokenId;
     
-    // Minimum staking duration (7 days in seconds)
-    uint256 public constant MIN_STAKE_DURATION = 7 days;
-    
     // Events
-    event NFTStaked(uint256 indexed tokenId, address indexed owner, uint256 timestamp);
-    event NFTUnstaked(uint256 indexed tokenId, address indexed owner, uint256 timestamp);
-    event NFTMinted(uint256 indexed tokenId, address indexed to);
+    event NFTMinted(uint256 indexed tokenId, address indexed to, string uri);
     
     constructor() ERC721("Mock Moca NFT", "MOCA") Ownable(msg.sender) {
-        _nextTokenId = 1; // Start token IDs from 1
+        _nextTokenId = 0; // Start token IDs from 0
     }
     
     /**
-     * @dev Mint a new NFT to the specified address
+     * @dev Internal function to set token URI
+     * @param tokenId Token ID
+     * @param uri_ Token URI
+     */
+    function _setTokenURI(uint256 tokenId, string memory uri_) internal {
+        _tokenURIs[tokenId] = uri_;
+    }
+    
+    /**
+     * @dev Returns the token URI for a given token ID
+     * @param tokenId Token ID to query
+     * @return Token URI string
+     */
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _requireOwned(tokenId);
+        string memory uri = _tokenURIs[tokenId];
+        require(bytes(uri).length > 0, "URI not set");
+        return uri;
+    }
+    
+    
+    /**
+     * @dev Mint a new NFT with URI
      * @param to Address to receive the NFT
+     * @param uri_ Token URI for metadata (IPFS/HTTP link)
      * @return tokenId The ID of the minted token
      */
-    function mint(address to) public returns (uint256) {
+    function mint(address to, string memory uri_) public onlyOwner returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-        emit NFTMinted(tokenId, to);
+        _setTokenURI(tokenId, uri_);
+        emit NFTMinted(tokenId, to, uri_);
         return tokenId;
     }
     
     /**
-     * @dev Stake an NFT (must be owner)
-     * @param tokenId The ID of the token to stake
+     * @dev Batch mint multiple NFTs
+     * @param to Address to receive the NFTs
+     * @param uris Array of URIs for each token
+     * @return tokenIds Array of minted token IDs
      */
-    function stake(uint256 tokenId) public {
-        require(ownerOf(tokenId) == msg.sender, "Not the owner");
-        require(!stakes[tokenId].isStaked, "Already staked");
+    function batchMint(address to, string[] memory uris) external onlyOwner returns (uint256[] memory) {
+        uint256[] memory tokenIds = new uint256[](uris.length);
         
-        stakes[tokenId] = StakeInfo({
-            stakedAt: block.timestamp,
-            isStaked: true
-        });
-        
-        emit NFTStaked(tokenId, msg.sender, block.timestamp);
-    }
-    
-    /**
-     * @dev Unstake an NFT (must be owner)
-     * @param tokenId The ID of the token to unstake
-     */
-    function unstake(uint256 tokenId) public {
-        require(ownerOf(tokenId) == msg.sender, "Not the owner");
-        require(stakes[tokenId].isStaked, "Not staked");
-        
-        stakes[tokenId].isStaked = false;
-        // Note: We keep stakedAt for historical record
-        
-        emit NFTUnstaked(tokenId, msg.sender, block.timestamp);
-    }
-    
-    /**
-     * @dev Check if a specific NFT has been staked for at least 7 days
-     * @param tokenId The ID of the token to check
-     * @return bool True if staked for >= 7 days, false otherwise
-     */
-    function isStakedLongEnough(uint256 tokenId) public view returns (bool) {
-        StakeInfo memory stakeInfo = stakes[tokenId];
-        
-        if (!stakeInfo.isStaked) {
-            return false;
+        for (uint256 i = 0; i < uris.length; i++) {
+            tokenIds[i] = mint(to, uris[i]);
         }
         
-        uint256 stakeDuration = block.timestamp - stakeInfo.stakedAt;
-        return stakeDuration >= MIN_STAKE_DURATION;
-    }
-    
-    /**
-     * @dev Check if a user has at least one eligible NFT (staked >= 7 days)
-     * @param user Address of the user to check
-     * @return bool True if user has at least one eligible NFT
-     * 
-     * Note: This function iterates through all minted tokens. 
-     * In production, consider maintaining a user->tokens mapping for gas optimization.
-     */
-    function hasEligibleNFT(address user) public view returns (bool) {
-        // Iterate through all possible token IDs
-        for (uint256 tokenId = 1; tokenId < _nextTokenId; tokenId++) {
-            // Check if token exists and user owns it
-            try this.ownerOf(tokenId) returns (address owner) {
-                if (owner == user && isStakedLongEnough(tokenId)) {
-                    return true;
-                }
-            } catch {
-                // Token doesn't exist or was burned, continue
-                continue;
-            }
-        }
-        
-        return false;
+        return tokenIds;
     }
     
     /**
@@ -130,44 +87,4 @@ contract MockMocaNFT is ERC721, Ownable {
     function totalSupply() public view returns (uint256) {
         return _nextTokenId - 1;
     }
-    
-    /**
-     * @dev Get stake info for a token
-     * @param tokenId The token ID to query
-     * @return stakedAt Timestamp when staked
-     * @return isStaked Whether currently staked
-     * @return duration How long it's been staked (0 if not staked)
-     */
-    function getStakeInfo(uint256 tokenId) public view returns (
-        uint256 stakedAt,
-        bool isStaked,
-        uint256 duration
-    ) {
-        StakeInfo memory info = stakes[tokenId];
-        stakedAt = info.stakedAt;
-        isStaked = info.isStaked;
-        duration = info.isStaked ? (block.timestamp - info.stakedAt) : 0;
-    }
-    
-    /**
-     * @dev Override to prevent transfer of staked NFTs
-     * @param to Address receiving the token
-     * @param tokenId Token ID being transferred
-     * @param auth Address authorized to perform the update
-     */
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual override returns (address) {
-        address from = _ownerOf(tokenId);
-        
-        // Prevent transfer if staked (except minting and burning)
-        if (from != address(0) && to != address(0)) {
-            require(!stakes[tokenId].isStaked, "Cannot transfer staked NFT");
-        }
-        
-        return super._update(to, tokenId, auth);
-    }
 }
-
