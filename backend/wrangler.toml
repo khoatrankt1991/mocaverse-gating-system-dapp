@@ -7,14 +7,12 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "moca-invite-system-db"
-database_id = "placeholder" # Not needed for local dev, will be filled for production
+database_id = "1af658b5-16c4-4893-babb-76ba414f7a36"
 
 # KV namespace for rate limiting and caching
-# For local dev, preview_id will be used automatically
 [[kv_namespaces]]
 binding = "KV"
-id = "placeholder" # Not needed for local dev
-preview_id = "placeholder" # Local dev will use in-memory KV
+id = "d9a195c6b8db4b9f95c793c5bcf412af"
 
 # Environment variables (will be set via wrangler secret put)
 [vars]

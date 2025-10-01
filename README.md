@@ -39,11 +39,11 @@ npm run dev                 # Start server at http://localhost:8787
 npm run test:integration    # Run integration tests
 ```
 
-### 3. Frontend (Coming Soon)
+### 3. Frontend
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev                 # Start at http://localhost:3001
 ```
 
 ---
@@ -54,15 +54,20 @@ npm run dev
 |---|---|---|
 | **Phase 1** | ✅ Complete | Smart Contracts deployed on Sepolia |
 | **Phase 2** | ✅ Complete | Backend API with D1 & KV |
-| **Phase 3** | ⏳ In Progress | Frontend with Next.js 14 |
+| **Phase 3** | ✅ Complete | Frontend with Next.js 15 & RainbowKit |
 
 ---
 
-## 🔗 Deployed Contracts
+## 🔗 Production URLs
 
-**MockMocaNFT (Sepolia)**
-- Address: `0xAAF273a3C22A61e8104D4DFC83c16e1E4E273a10`
-- [View on Etherscan](https://sepolia.etherscan.io/address/0xAAF273a3C22A61e8104D4DFC83c16e1E4E273a10#code)
+**Backend API (Cloudflare Workers)**
+- URL: [https://moca-gating-system.kai-tran9xx.workers.dev/](https://moca-gating-system.kai-tran9xx.workers.dev/)
+- Swagger Docs: [https://moca-gating-system.kai-tran9xx.workers.dev/docs](https://moca-gating-system.kai-tran9xx.workers.dev/docs)
+
+**Smart Contracts (Sepolia)**
+- MockMocaNFT: `0x5d51BdDC648e411552846F901C734d38391a6608`
+- MocaStaking: `0x88a1Dbe9568dDb8764EA10b279801E146Be6C531`
+- [View on Etherscan](https://sepolia.etherscan.io/address/0x88a1Dbe9568dDb8764EA10b279801E146Be6C531#code)
 
 ---
 
@@ -83,7 +88,7 @@ npm run dev
 
 - **Smart Contracts**: Solidity, Hardhat, OpenZeppelin, ethers.js
 - **Backend**: Cloudflare Workers, Hono, D1, KV, TypeScript
-- **Frontend**: Next.js 14, TailwindCSS, ethers.js (Coming Soon)
+- **Frontend**: Next.js 15, TailwindCSS, wagmi, RainbowKit, TypeScript
 
 ---
 
@@ -96,8 +101,8 @@ cd smart-contracts && npm test
 # Backend API
 cd backend && npm run test:integration
 
-# Frontend (Coming Soon)
-cd frontend && npm test
+# Frontend
+cd frontend && npm run build
 ```
 
 ---
