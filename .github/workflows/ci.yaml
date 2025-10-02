@@ -26,7 +26,7 @@ jobs:
     - name: 📦 Install smart contract dependencies
       run: |
         cd smart-contracts
-        npm ci
+        npm ci --legacy-peer-deps
     
     - name: 🔐 Create .env file for smart contracts
       run: |
