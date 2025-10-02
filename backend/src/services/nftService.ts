@@ -13,16 +13,25 @@ export async function checkNFTEligibilityWithCache(
   const cacheKey = `nft_eligibility:${walletAddress.toLowerCase()}`;
   
   // Try to get from cache
-  const cached = await env.KV.get(cacheKey);
-  if (cached !== null) {
-    return cached === 'true';
+  try {
+    const cached = await env.KV.get(cacheKey);
+    if (cached !== null) {
+      return cached === 'true';
+    }
+  } catch (error) {
+    // If KV fails, continue to blockchain check
+    console.warn('KV cache miss, falling back to blockchain check:', error);
   }
   
   // Check on-chain
   const isEligible = await checkNFTEligibility(walletAddress, env);
   
-  // Cache the result
-  await env.KV.put(cacheKey, isEligible.toString(), { expirationTtl: CACHE_TTL });
+  // Cache the result (don't fail if KV is down)
+  try {
+    await env.KV.put(cacheKey, isEligible.toString(), { expirationTtl: CACHE_TTL });
+  } catch (error) {
+    console.warn('Failed to cache result:', error);
+  }
   
   return isEligible;
 }

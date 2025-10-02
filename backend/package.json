@@ -11,6 +11,10 @@
     "db:migrate:remote": "wrangler d1 migrations apply moca-invite-system-db --remote",
     "db:list": "wrangler d1 list",
     "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "test:integration": "tsx scripts/test-all.ts",
     "db:clean": "rm -rf .wrangler/state && npm run db:migrate:local"
   },
@@ -32,8 +36,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",
     "@types/node": "^20.11.5",
+    "@vitest/coverage-v8": "^2.0.4",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
+    "vitest": "^2.0.4",
     "wrangler": "^3.22.4"
   }
 }
