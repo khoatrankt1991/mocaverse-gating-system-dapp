@@ -10,9 +10,15 @@ A multi-tier gating system that grants VIP access through:
 
 Built with Ethereum smart contracts and Cloudflare Workers.
 
+**🌐 [Try the Live App →](https://mocaverse-gating-system.vercel.app/)**
+
+**📸 [View Screenshots →](./docs/TESTING.md)**
+
 ---
 
 ## 🚀 Quick Start
+
+**🌐 [Try the Live App →](https://mocaverse-gating-system.vercel.app/)**
 
 ### Prerequisites
 - Node.js ≥18
@@ -59,6 +65,9 @@ npm run dev                 # Start at http://localhost:3001
 ---
 
 ## 🔗 Production URLs
+
+**🌐 Live Application**
+- **Frontend**: [https://mocaverse-gating-system.vercel.app/](https://mocaverse-gating-system.vercel.app/) - Try the live app!
 
 **Backend API (Cloudflare Workers)**
 - URL: [https://moca-gating-system.kai-tran9xx.workers.dev/](https://moca-gating-system.kai-tran9xx.workers.dev/)
