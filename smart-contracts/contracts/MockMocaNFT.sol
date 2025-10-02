@@ -85,6 +85,6 @@ contract MockMocaNFT is ERC721, Ownable {
      * @return uint256 Total supply
      */
     function totalSupply() public view returns (uint256) {
-        return _nextTokenId - 1;
+        return _nextTokenId;
     }
 }
