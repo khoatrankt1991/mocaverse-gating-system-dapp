@@ -10,9 +10,22 @@ A multi-tier gating system that grants VIP access through:
 
 Built with Ethereum smart contracts and Cloudflare Workers.
 
+**🔧 Full CI/CD Pipeline**: Automated testing for smart contracts, backend, and frontend with GitHub Actions.
+
 **🌐 [Try the Live App →](https://mocaverse-gating-system.vercel.app/)**
 
 **📸 [View Screenshots →](./docs/TESTING.md)**
+
+### 📋 Video Demo 1:
+**🎥 [Watch Demo →](https://www.loom.com/share/8f2140ff21944da09c0d1d338c09dbaf?sid=08ffd310-25b1-42ce-bc69-74c148ebee47)**
+- **Two main flows**: NFT eligible + Invite code success
+- **Two case scenarios** demonstrated in detail
+
+### 📋 Video Demo 2:
+**🎥 [Watch Demo →](https://www.loom.com/share/c38af9851a914cf0ab161b88bf6c087e?sid=30cafa68-de04-41f2-9105-e354fd74b7ea)**
+- **Full workflow**: User receives NFT → Stake → Wait for duration → Join VIP
+- **Duration setting**: 1 minute (instead of 7 days in production)
+- **Configurable duration**: Can be customized
 
 ---
 
@@ -103,16 +116,26 @@ npm run dev                 # Start at http://localhost:3001
 
 ## 🧪 Testing
 
+### Full CI/CD Pipeline
+This project includes comprehensive testing across all components:
+
 ```bash
-# Smart contracts
+# Smart contracts (24 tests)
 cd smart-contracts && npm test
 
-# Backend API
-cd backend && npm run test:integration
+# Backend API (29 tests)
+cd backend && npm run test:run
 
-# Frontend
-cd frontend && npm run build
+# Frontend (81 tests)
+cd frontend && npm run test:run
 ```
+
+### CI/CD Features
+- **✅ Smart Contract Tests**: Hardhat + Ethers.js
+- **✅ Backend Tests**: Vitest + Node.js environment
+- **✅ Frontend Tests**: Vitest + React Testing Library
+- **✅ Coverage Reports**: Codecov integration
+- **✅ Automated Pipeline**: GitHub Actions
 
 ---
 
