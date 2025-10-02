@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useAccount } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
-import { useWallet } from '@/hooks/useWallet'
 import { useNFTVerification } from '@/hooks/useNFTVerification'
 
 interface NFTVerificationProps {
@@ -12,7 +13,7 @@ interface NFTVerificationProps {
 }
 
 export default function NFTVerification({ onVerified, onBack }: NFTVerificationProps) {
-  const { address, isConnected, isConnecting, connectWallet } = useWallet()
+  const { address, isConnected } = useAccount()
   const { checkEligibility, isReadingContract, isChecking, error } = useNFTVerification(address)
 
   const handleCheckEligibility = async () => {
@@ -23,6 +24,7 @@ export default function NFTVerification({ onVerified, onBack }: NFTVerificationP
       onVerified(address)
     }
   }
+
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -45,14 +47,55 @@ export default function NFTVerification({ onVerified, onBack }: NFTVerificationP
                 </ul>
               </div>
 
-              <Button
-                variant="primary"
-                className="w-full"
-                onClick={connectWallet}
-                isLoading={isConnecting}
-              >
-                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-              </Button>
+              <div className="w-full">
+                <ConnectButton.Custom>
+                  {({
+                    account,
+                    chain,
+                    openAccountModal,
+                    openChainModal,
+                    openConnectModal,
+                    authenticationStatus,
+                    mounted,
+                  }) => {
+                    const ready = mounted && authenticationStatus !== 'loading';
+                    const connected =
+                      ready &&
+                      account &&
+                      chain &&
+                      (!authenticationStatus ||
+                        authenticationStatus === 'authenticated');
+
+                    return (
+                      <div
+                        {...(!ready && {
+                          'aria-hidden': true,
+                          'style': {
+                            opacity: 0,
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                          },
+                        })}
+                      >
+                        {(() => {
+                          if (!connected) {
+                            return (
+                              <Button
+                                variant="primary"
+                                className="w-full"
+                                onClick={openConnectModal}
+                              >
+                                Connect Wallet
+                              </Button>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
+                    );
+                  }}
+                </ConnectButton.Custom>
+              </div>
             </>
           ) : (
             <>
@@ -88,14 +131,15 @@ export default function NFTVerification({ onVerified, onBack }: NFTVerificationP
             >
               Back
             </Button>
-            {isConnected && !isReadingContract && !isChecking && (
+            {isConnected && (
               <Button
                 type="button"
                 variant="primary"
                 onClick={handleCheckEligibility}
                 className="flex-1"
+                disabled={isReadingContract || isChecking}
               >
-                {error ? 'Retry' : 'Check NFT'}
+                {isReadingContract || isChecking ? 'Checking...' : (error ? 'Retry' : 'Check NFT')}
               </Button>
             )}
           </div>

@@ -5,7 +5,7 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 
 export const config = getDefaultConfig({
   appName: 'Moca Gating System',
-  projectId: 'YOUR_PROJECT_ID', // Get from https://cloud.walletconnect.com
+  projectId: 'moca-gating-system', // Simple project ID for development
   chains: [sepolia],
   ssr: true,
 });
