@@ -8,7 +8,7 @@ export function useWallet() {
   const { disconnect } = useDisconnect()
 
   const connectWallet = () => {
-    const injectedConnector = connectors.find((c) => c.id === 'injected')
+    const injectedConnector = connectors.find(c => c.id === 'injected')
     if (injectedConnector) {
       connect({ connector: injectedConnector })
     }
@@ -22,4 +22,3 @@ export function useWallet() {
     disconnect,
   }
 }
-

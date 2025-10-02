@@ -70,7 +70,9 @@ export function useRegistration() {
 
       return true
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to submit registration')
+      setError(
+        error instanceof Error ? error.message : 'Failed to submit registration'
+      )
       return false
     } finally {
       setIsSubmitting(false)
@@ -86,4 +88,3 @@ export function useRegistration() {
     clearError,
   }
 }
-

@@ -9,7 +9,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`bg-slate-800 border border-slate-700 rounded-xl p-6 ${className}`}
+        className={`rounded-xl border border-slate-700 bg-slate-800 p-6 ${className}`}
         {...props}
       >
         {children}
@@ -19,33 +19,40 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 )
 Card.displayName = 'Card'
 
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div ref={ref} className={`mb-4 ${className}`} {...props} />
-  )
-)
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className = '', ...props }, ref) => (
+  <div ref={ref} className={`mb-4 ${className}`} {...props} />
+))
 CardHeader.displayName = 'CardHeader'
 
-const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className = '', ...props }, ref) => (
-    <h3 ref={ref} className={`text-xl font-semibold text-white ${className}`} {...props} />
-  )
-)
+const CardTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className = '', ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={`text-xl font-semibold text-white ${className}`}
+    {...props}
+  />
+))
 CardTitle.displayName = 'CardTitle'
 
-const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className = '', ...props }, ref) => (
-    <p ref={ref} className={`text-sm text-slate-400 ${className}`} {...props} />
-  )
-)
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className = '', ...props }, ref) => (
+  <p ref={ref} className={`text-sm text-slate-400 ${className}`} {...props} />
+))
 CardDescription.displayName = 'CardDescription'
 
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className = '', ...props }, ref) => (
-    <div ref={ref} className={className} {...props} />
-  )
-)
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className = '', ...props }, ref) => (
+  <div ref={ref} className={className} {...props} />
+))
 CardContent.displayName = 'CardContent'
 
 export { Card, CardHeader, CardTitle, CardDescription, CardContent }
-

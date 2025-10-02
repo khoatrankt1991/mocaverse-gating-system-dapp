@@ -62,9 +62,9 @@ export default function Home() {
   // Show VIP dashboard if user is connected and is VIP
   if (isConnected && isVip) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col">
+      <div className="flex min-h-screen flex-col bg-slate-900">
         <Header />
-        <main className="flex-1 flex items-center justify-center p-4 pt-8">
+        <main className="flex flex-1 items-center justify-center p-4 pt-8">
           <VIPDashboard />
         </main>
         <Footer />
@@ -75,12 +75,12 @@ export default function Home() {
   // Show loading while checking VIP status
   if (isConnected && isVIPLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col">
+      <div className="flex min-h-screen flex-col bg-slate-900">
         <Header />
-        <main className="flex-1 flex items-center justify-center p-4 pt-8">
-          <div className="w-full max-w-md mx-auto">
+        <main className="flex flex-1 items-center justify-center p-4 pt-8">
+          <div className="mx-auto w-full max-w-md">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-4"></div>
+              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-purple-500"></div>
               <p className="text-slate-400">Checking VIP status...</p>
             </div>
           </div>
@@ -91,9 +91,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-900">
       <Header />
-      <main className="flex-1 flex items-center justify-center p-4 pt-8">
+      <main className="flex flex-1 items-center justify-center p-4 pt-8">
         <div className="w-full max-w-6xl">
           {step === 'select' && (
             <GatingOptions

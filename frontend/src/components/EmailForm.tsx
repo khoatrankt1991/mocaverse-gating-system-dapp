@@ -1,7 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useRegistration } from '@/hooks/useRegistration'
@@ -15,7 +21,13 @@ interface EmailFormProps {
   onBack: () => void
 }
 
-export default function EmailForm({ wallet, inviteCode, registrationType, onSuccess, onBack }: EmailFormProps) {
+export default function EmailForm({
+  wallet,
+  inviteCode,
+  registrationType,
+  onSuccess,
+  onBack,
+}: EmailFormProps) {
   const [email, setEmail] = useState('')
   const { register, isSubmitting, error, clearError } = useRegistration()
 
@@ -35,7 +47,7 @@ export default function EmailForm({ wallet, inviteCode, registrationType, onSucc
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader>
           <CardTitle>Complete Your Registration</CardTitle>
@@ -46,15 +58,17 @@ export default function EmailForm({ wallet, inviteCode, registrationType, onSucc
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {wallet && (
-              <div className="bg-slate-700/50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-slate-400 mb-1">Connected Wallet</p>
-                <p className="font-mono text-xs text-white break-all">{wallet}</p>
+              <div className="mb-4 rounded-lg bg-slate-700/50 p-4">
+                <p className="mb-1 text-sm text-slate-400">Connected Wallet</p>
+                <p className="font-mono text-xs break-all text-white">
+                  {wallet}
+                </p>
               </div>
             )}
 
             {inviteCode && (
-              <div className="bg-slate-700/50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-slate-400 mb-1">Invite Code</p>
+              <div className="mb-4 rounded-lg bg-slate-700/50 p-4">
+                <p className="mb-1 text-sm text-slate-400">Invite Code</p>
                 <p className="font-mono text-sm text-white">{inviteCode}</p>
               </div>
             )}
@@ -64,7 +78,7 @@ export default function EmailForm({ wallet, inviteCode, registrationType, onSucc
               type="email"
               placeholder="your@email.com"
               value={email}
-              onChange={(e) => {
+              onChange={e => {
                 setEmail(e.target.value)
                 clearError()
               }}
@@ -73,12 +87,11 @@ export default function EmailForm({ wallet, inviteCode, registrationType, onSucc
               required
             />
 
-            <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-4">
+            <div className="rounded-lg border border-yellow-400/30 bg-yellow-400/10 p-4">
               <p className="text-sm text-yellow-200">
-                {wallet 
+                {wallet
                   ? 'You will be asked to sign a message to verify wallet ownership.'
-                  : 'Your email will be registered with your invite code.'
-                }
+                  : 'Your email will be registered with your invite code.'}
               </p>
             </div>
 

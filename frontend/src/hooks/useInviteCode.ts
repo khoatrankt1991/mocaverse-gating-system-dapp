@@ -9,7 +9,7 @@ export function useInviteCode() {
 
   const verifyCode = async (code: string): Promise<boolean> => {
     setError('')
-    
+
     // Basic validation
     if (!code.trim()) {
       setError('Please enter an invite code')
@@ -25,7 +25,7 @@ export function useInviteCode() {
 
     try {
       const result = await verifyInviteCode(code.toUpperCase())
-      
+
       if (result.valid) {
         return true
       } else {
@@ -33,7 +33,9 @@ export function useInviteCode() {
         return false
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to verify invite code')
+      setError(
+        err instanceof Error ? err.message : 'Failed to verify invite code'
+      )
       return false
     } finally {
       setIsVerifying(false)
@@ -49,4 +51,3 @@ export function useInviteCode() {
     clearError,
   }
 }
-

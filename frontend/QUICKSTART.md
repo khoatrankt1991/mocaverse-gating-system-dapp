@@ -10,13 +10,15 @@
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Configure environment:**
-   
+
    Create `.env.local` file:
+
    ```bash
    NEXT_PUBLIC_API_URL=http://localhost:8787
    NEXT_PUBLIC_CHAIN_ID=11155111
@@ -24,10 +26,11 @@
    ```
 
 3. **Run development server:**
+
    ```bash
    npm run dev
    ```
-   
+
    Open http://localhost:3000
 
 ## Architecture
@@ -63,23 +66,27 @@ src/
 ### Custom Hooks
 
 **useWallet** - Wallet connection management
+
 ```typescript
 const { address, isConnected, connectWallet } = useWallet()
 ```
 
 **useInviteCode** - Invite code verification
+
 ```typescript
 const { verifyCode, isVerifying, error } = useInviteCode()
 const isValid = await verifyCode('MOCA-XXXXXXXX')
 ```
 
 **useNFTVerification** - NFT eligibility check
+
 ```typescript
 const { checkEligibility, isChecking, error } = useNFTVerification(address)
 const isEligible = await checkEligibility()
 ```
 
 **useRegistration** - Registration submission
+
 ```typescript
 const { register, isSubmitting, error } = useRegistration()
 const success = await register({ email, wallet, registrationType })
@@ -112,18 +119,18 @@ const success = await register({ email, wallet, registrationType })
 ### Config (`src/app/providers/config.ts`)
 
 ```typescript
-import { createConfig, http } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
+import { createConfig, http } from 'wagmi'
+import { sepolia } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 export const config = createConfig({
-  chains: [sepolia],           // Sepolia testnet only
-  connectors: [injected()],    // MetaMask auto-detect
+  chains: [sepolia], // Sepolia testnet only
+  connectors: [injected()], // MetaMask auto-detect
   transports: {
-    [sepolia.id]: http(),      // Public Sepolia RPC
+    [sepolia.id]: http(), // Public Sepolia RPC
   },
-  ssr: true,                   // Next.js App Router
-});
+  ssr: true, // Next.js App Router
+})
 ```
 
 ### Provider Setup
@@ -157,6 +164,7 @@ export function Web3Provider({ children }) {
 ### Manual Testing Checklist
 
 **NFT Path:**
+
 - [ ] Connect MetaMask wallet
 - [ ] Switch to Sepolia testnet (if needed)
 - [ ] Click "Check NFT" button
@@ -167,12 +175,14 @@ export function Web3Provider({ children }) {
 - [ ] Complete registration
 
 **Invite Code Path:**
+
 - [ ] Enter invalid code → see error
 - [ ] Enter valid code (get from backend admin)
 - [ ] Proceed to email registration
 - [ ] Submit and see success
 
 **Edge Cases:**
+
 - [ ] Duplicate email detection
 - [ ] Invalid email format
 - [ ] Signature rejection
@@ -183,11 +193,13 @@ export function Web3Provider({ children }) {
 ### Wallet Connection Issues
 
 **Problem:** MetaMask not connecting
+
 - Ensure MetaMask is installed
 - Unlock MetaMask wallet
 - Refresh page and try again
 
 **Problem:** Wrong network
+
 - Open MetaMask
 - Switch to Sepolia testnet manually
 - Reconnect wallet
@@ -195,11 +207,13 @@ export function Web3Provider({ children }) {
 ### NFT Verification Issues
 
 **Problem:** Loading indefinitely
+
 - Check browser console for errors
 - Verify contract address in `.env.local`
 - Check network tab for RPC calls
 
 **Problem:** "No eligible NFT" error
+
 - This is expected if wallet doesn't have staked NFT
 - Need admin to mint NFT with 7-day stake timestamp
 - See smart contract updates needed below
@@ -207,6 +221,7 @@ export function Web3Provider({ children }) {
 ### API Errors
 
 **Problem:** API calls failing
+
 - Ensure backend is running on port 8787
 - Check CORS settings in backend
 - Verify API_URL in `.env.local`
@@ -215,14 +230,12 @@ export function Web3Provider({ children }) {
 
 ### Current Limitations
 
-1. **NFT Testing:** 
+1. **NFT Testing:**
    - Smart contract needs admin function to mint pre-staked NFTs
    - Current wallets don't have eligible NFTs for testing
-   
 2. **Network:**
    - Sepolia testnet only
    - No mainnet support
-   
 3. **Wallet:**
    - MetaMask only (no WalletConnect)
    - Manual network switching required
@@ -236,7 +249,7 @@ Add to `MockMocaNFT.sol`:
 function adminMintAndStake(address to, uint256 daysAgo) external onlyOwner {
     uint256 tokenId = _nextTokenId++;
     _safeMint(to, tokenId);
-    
+
     stakes[tokenId] = StakeInfo({
         stakedAt: block.timestamp - (daysAgo * 1 days),
         isStaked: true
@@ -245,6 +258,7 @@ function adminMintAndStake(address to, uint256 daysAgo) external onlyOwner {
 ```
 
 Usage for testing:
+
 ```bash
 # Mint NFT staked 7 days ago
 npx hardhat run scripts/admin-mint.js --network sepolia

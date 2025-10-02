@@ -38,7 +38,9 @@ export function useVIPStatus() {
       const data: VIPStatusResponse = await response.json()
       setVipStatus(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to check VIP status')
+      setError(
+        err instanceof Error ? err.message : 'Failed to check VIP status'
+      )
       setVipStatus({ isVip: false, message: 'Error checking status' })
     } finally {
       setIsLoading(false)
@@ -62,6 +64,6 @@ export function useVIPStatus() {
     isVip: vipStatus?.isVip || false,
     registration: vipStatus?.registration,
     checkVIPStatus,
-    refetch: () => address && checkVIPStatus(address)
+    refetch: () => address && checkVIPStatus(address),
   }
 }

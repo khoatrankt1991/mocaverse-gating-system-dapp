@@ -1,7 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useInviteCode } from '@/hooks/useInviteCode'
@@ -11,7 +17,10 @@ interface InviteCodeFormProps {
   onBack: () => void
 }
 
-export default function InviteCodeForm({ onVerified, onBack }: InviteCodeFormProps) {
+export default function InviteCodeForm({
+  onVerified,
+  onBack,
+}: InviteCodeFormProps) {
   const [code, setCode] = useState('')
   const { verifyCode, isVerifying, error, clearError } = useInviteCode()
 
@@ -25,7 +34,7 @@ export default function InviteCodeForm({ onVerified, onBack }: InviteCodeFormPro
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader>
           <CardTitle>Enter Your Invite Code</CardTitle>
@@ -39,7 +48,7 @@ export default function InviteCodeForm({ onVerified, onBack }: InviteCodeFormPro
               label="Invite Code"
               placeholder="MOCA-XXXXXXXX"
               value={code}
-              onChange={(e) => {
+              onChange={e => {
                 setCode(e.target.value.toUpperCase())
                 clearError()
               }}
@@ -47,7 +56,7 @@ export default function InviteCodeForm({ onVerified, onBack }: InviteCodeFormPro
               maxLength={13}
               disabled={isVerifying}
             />
-            
+
             <div className="flex gap-3">
               <Button
                 type="button"

@@ -1,4 +1,9 @@
-export type Step = 'select' | 'verify-code' | 'verify-nft' | 'register' | 'success'
+export type Step =
+  | 'select'
+  | 'verify-code'
+  | 'verify-nft'
+  | 'register'
+  | 'success'
 
 export type GatingMethod = 'nft' | 'invite'
 
@@ -27,4 +32,3 @@ export interface NFTEligibilityResponse {
   eligible: boolean
   message?: string
 }
-

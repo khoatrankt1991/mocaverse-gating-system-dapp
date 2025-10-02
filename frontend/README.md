@@ -63,31 +63,38 @@ Visit [http://localhost:3000](http://localhost:3000)
 ## User Flow
 
 ### 1. Select Gating Method
+
 Users choose between:
+
 - **NFT Path**: Connect wallet and verify NFT ownership
 - **Invite Code Path**: Enter and verify invite code
 
 ### 2. Verification
+
 - **NFT**: Automatically checks if wallet has eligible staked NFT (≥7 days)
 - **Invite Code**: Validates code format and checks availability
 
 ### 3. Registration
+
 - Enter email address
 - Sign message with wallet (NFT path only)
 - Submit registration
 
 ### 4. Success
+
 - Confirmation screen
 - Registration complete
 
 ## Components
 
 ### Core UI Components
+
 - `Button`: Primary, secondary, and ghost variants with loading states
 - `Input`: Styled input with label and error handling
 - `Card`: Container component for content sections
 
 ### Feature Components
+
 - `GatingOptions`: Landing page with two gating method cards
 - `InviteCodeForm`: Input and verification for invite codes
 - `NFTVerification`: Wallet connection and NFT eligibility check
@@ -125,12 +132,14 @@ The frontend communicates with the backend API:
 ## Design System
 
 ### Colors
+
 - **Background**: Slate-900 (#0f172a)
 - **Cards**: Slate-800 with slate-700 borders
 - **Primary**: Yellow-400 (accent color)
 - **Text**: White/Slate-300
 
 ### Typography
+
 - Font: Inter (Google Fonts)
 - Headings: Bold, white
 - Body: Regular, slate-300
@@ -184,11 +193,13 @@ vercel deploy --prod
 ## Known Issues & Future Improvements
 
 ### Current Limitations
+
 - Only supports MetaMask wallet
 - Manual network switching required for Sepolia
 - No persistent user sessions
 
 ### Future Enhancements
+
 - [ ] WalletConnect support for mobile wallets
 - [ ] Automatic network switching
 - [ ] Email verification flow
@@ -202,16 +213,19 @@ vercel deploy --prod
 ## Troubleshooting
 
 ### Wallet Connection Issues
+
 - Ensure MetaMask is installed
 - Switch to Sepolia testnet
 - Check wallet is unlocked
 
 ### NFT Verification Fails
+
 - Verify NFT is staked for ≥7 days
 - Confirm correct network (Sepolia)
 - Check contract address is correct
 
 ### API Errors
+
 - Ensure backend is running
 - Check API URL in `.env.local`
 - Verify CORS settings
