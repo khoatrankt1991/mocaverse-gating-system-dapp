@@ -19,7 +19,7 @@ jobs:
     - name: 🧰 Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: 'smart-contracts/package-lock.json'
     
@@ -31,8 +31,8 @@ jobs:
     - name: 🔐 Create .env file for smart contracts
       run: |
         cd smart-contracts
-        echo "ALCHEMY_KEY=${{ secrets.ALCHEMY_KEY }}" >> .env
-        echo "ACCOUNT_PRIVATE_KEY=${{ secrets.ACCOUNT_PRIVATE_KEY }}" >> .env
+        echo "ALCHEMY_KEY=${{ secrets.ALCHEMY_KEY || 'https://eth-sepolia.g.alchemy.com/v2/demo' }}" >> .env
+        echo "ACCOUNT_PRIVATE_KEY=${{ secrets.ACCOUNT_PRIVATE_KEY || '0x0000000000000000000000000000000000000000000000000000000000000001' }}" >> .env
     
     - name: 🛠 Compile smart contracts
       run: |
@@ -57,7 +57,7 @@ jobs:
       - name: 🧰 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: 'frontend/package-lock.json'
 
